@@ -1,84 +1,63 @@
 package com.zhangyanye.freewalker;
 
-import android.app.DownloadManager;
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.VolleyError;
+import presenters.impl.StringPresenter;
+import views.impl.StringView;
 
-import net.VolleyListener;
-import net.VolleyRequest;
-
-import org.w3c.dom.Text;
-
-import java.lang.reflect.Method;
-
-import model.entity.WebApp;
-import presenter.impl.WebAppPresenter;
-import ui.base.BaseActivity;
-import ui.view.IWebAppView;
-import utils.Util;
-
-public class MainActivity extends BaseActivity implements IWebAppView {
+public class MainActivity extends Activity implements StringView {
 
     private TextView textView;
-    private WebAppPresenter webAppPresenter;
+    private StringPresenter stringPresenter;
+    private Dialog dialog;
+    private Button button;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        textView = findView(R.id.txt);
-        webAppPresenter = new WebAppPresenter(this);
-        webAppPresenter.getApp("sf");
+        initView();
+    }
+
+    private void initView() {
+        stringPresenter = new StringPresenter(this);
+        textView = (TextView) findViewById(R.id.txt);
+        dialog = new Dialog(this);
+        button = (Button) findViewById(R.id.btn);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                stringPresenter.setUrl("http://wwww.baidu.com/");
+            }
+        });
+
+    }
+
+
+    @Override
+    public void showString(String result) {
+        textView.setText(result);
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
+    public void showLoding() {
+        dialog.show();
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.x ml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    public void hideLoding() {
+        dialog.hide();
     }
 
     @Override
-    public void showLoading() {
-        Util.showLog("loading");
-    }
-
-    @Override
-    public void hideLoading() {
-        Util.showLog("hideloading");
-    }
-
-    @Override
-    public void showError() {
-        Util.showLog("error");
-    }
-
-    @Override
-    public void setWebApp(WebApp webApp) {
-       // textView.setText(webApp.getName());
+    public Context getContext() {
+        return this;
     }
 }
